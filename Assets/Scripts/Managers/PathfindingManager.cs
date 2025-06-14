@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Nodes;
-using Common;
 
 namespace Managers
 {
@@ -15,7 +14,7 @@ namespace Managers
             AStar
         }
 
-        [SerializeField] private PathNodeGenerator pathGenerator = new PathNodeGenerator();
+        [SerializeField] private PathGenerator pathGenerator = new PathGenerator();
         [SerializeField] private PathfindingStrategy pathfindingStrategy = PathfindingStrategy.BreadthFirst;
 
         private List<PathNode> pathNodes;
@@ -23,7 +22,7 @@ namespace Managers
         private List<PathNode> closedNodes;
 
 
-        void Start ()
+        void Awake ()
         {
             if (pathNodes == null)
                 GeneratePath();

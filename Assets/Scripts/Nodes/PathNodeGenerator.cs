@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Nodes
 {
     [Serializable]
-    public class PathNodeGenerator
+    public class PathGenerator
     {
         [Serializable]
         private struct TerrainLayer
