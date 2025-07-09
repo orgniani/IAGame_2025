@@ -1,5 +1,6 @@
 using UnityEngine.Events;
 using Helpers;
+using UnityEngine;
 
 namespace StateMachine
 {
@@ -23,6 +24,8 @@ namespace StateMachine
 
             if (targetState != null)
             {
+                Debug.Log($"[FSM] Transitioning from {currentState.GetType().Name} to {targetState.GetType().Name}");
+
                 currentState.Exit();
                 targetState.Enter();
 

@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 3865801640494033229}
   - component: {fileID: 790642188305773925}
   - component: {fileID: 6890925617814285620}
+  - component: {fileID: 6787403874483110362}
   m_Layer: 7
-  m_Name: Enemy
+  m_Name: Miner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,15 +62,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wanderState:
-    wanderSpeed: 5
+    wanderSpeed: 1
     searchRadius: 5
-    circleWanderRadius: 2
-    circleSearchPrecision: 16
+    circleWanderRadius: 3
+    circleSearchPrecision: 32
   chaseState:
-    chaseSpeed: 5
+    chaseSpeed: 2
     loseTrackRange: 5
     pathfindingIntervals: 0.5
-  attackTarget: {fileID: 0}
+  goldMineManager: {fileID: 0}
+  miningEfficiency: 1
+--- !u!114 &6787403874483110362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 969507062849263540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98ceb116f88451f42bd59771fa793757, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxCapacity: 5
 --- !u!1 &2239061786817805300
 GameObject:
   m_ObjectHideFlags: 0

@@ -558,7 +558,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 969507062849263540, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
       propertyPath: m_Name
-      value: Enemy
+      value: Miner
       objectReference: {fileID: 0}
     - target: {fileID: 2764369558376322417, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
       propertyPath: attackTarget
