@@ -4,8 +4,9 @@ namespace Mines
 {
     public class GoldMine : MonoBehaviour
     {
-        [SerializeField] private GoldMineManager mineManager;
+        [SerializeField] private MineManager mineManager;
         [SerializeField] private int goldAmount = 10;
+        [SerializeField] private GameObject goldVisual;
 
         public bool IsOccupied { get; private set; } = false;
         public bool IsDepleted => goldAmount <= 0;
@@ -24,7 +25,10 @@ namespace Mines
             goldAmount -= extracted;
 
             if (IsDepleted)
+            {
                 mineManager?.UnregisterMine(this);
+                goldVisual.SetActive(false);
+            }
 
             return extracted;
         }

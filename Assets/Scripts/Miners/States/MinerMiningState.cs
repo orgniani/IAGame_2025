@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using StateMachine;
 using System.Collections;
+using Mines;
 
 namespace Miners
 {
@@ -47,20 +48,47 @@ namespace Miners
         {
             var mine = owner.CurrentMine;
 
-            while (!owner.Inventory.IsFull && mine != null && !mine.IsDepleted)
+            while (CanContinueMining(mine))
             {
                 yield return new WaitForSeconds(secondsPerCycle);
-
-                int extracted = mine.ExtractGold(goldPerCycle);
-                owner.Inventory.AddGold(extracted);
-
-                Debug.Log($"[FSM] {owner.name} mined {extracted}, now carrying {owner.Inventory.CurrentGold}");
+                MineGold(mine);
             }
 
+            HandlePostMining(mine);
+        }
+
+        private bool CanContinueMining(GoldMine mine)
+        {
+            return mine != null && !mine.IsDepleted && !owner.Inventory.IsFull;
+        }
+
+        private void MineGold(GoldMine mine)
+        {
+            int extracted = mine.ExtractGold(goldPerCycle);
+            owner.Inventory.AddGold(extracted);
+
+            owner.UpdateBillboard();
+
+            Debug.Log($"[FSM] {owner.name} mined {extracted}, now carrying {owner.Inventory.CurrentGold}");
+        }
+
+        private void HandlePostMining(GoldMine mine)
+        {
             if (mine != null)
                 mine.SetOccupied(false);
 
-            owner.OnStartReturning?.Invoke();
+            if (owner.Inventory.IsFull)
+            {
+                owner.OnStartReturning?.Invoke();
+                return;
+            }
+
+            owner.SelectNewMine();
+
+            if (owner.CurrentMine != null)
+                owner.OnStartMovingToMine?.Invoke();
+            else
+                owner.OnStartReturning?.Invoke();
         }
     }
 }

@@ -1,14 +1,23 @@
 using Managers;
 using System.Collections.Generic;
-using System.Linq;
+using UI;
 using UnityEngine;
 
 namespace Mines
 {
-    public class GoldMineManager : MonoBehaviour
+    public class MineManager : MonoBehaviour
     {
         [SerializeField] private PathfindingManager pathfindingManager;
         [SerializeField] private List<GoldMine> goldMines = new();
+
+        [SerializeField] private UIHUD hud;
+        private int _totalGold = 0;
+
+        public void ReportGoldDeposited(int amount)
+        {
+            _totalGold += amount;
+            hud?.SetTotalGold(_totalGold);
+        }
 
         public GoldMine GetBestAvailableMine(Vector3 minerPosition)
         {

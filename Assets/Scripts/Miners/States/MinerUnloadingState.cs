@@ -31,7 +31,11 @@ namespace Miners
         private IEnumerator UnloadRoutine()
         {
             yield return new WaitForSeconds(unloadTime);
+
+            owner.ReportUnloadedGold();        
             owner.Inventory.Clear();
+            owner.UpdateBillboard();
+
             owner.OnUnloadFinished?.Invoke();
         }
     }

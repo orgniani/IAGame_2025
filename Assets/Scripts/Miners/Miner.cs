@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using StateMachine;
 using Nodes;
 using Mines;
+using UI;
 
 namespace Miners
 {
@@ -17,11 +18,14 @@ namespace Miners
         [SerializeField] private MinerUnloadingState unloadingState = new MinerUnloadingState();
 
         [Header("Common References")]
-        [SerializeField] private GoldMineManager goldMineManager;
+        [SerializeField] private MineManager mineManager;
         [SerializeField] private Transform basePosition;
 
         [Header("Mining Settings")]
         [SerializeField, Range(0.1f, 10f)] private float miningEfficiency = 1f;
+
+        [Header("UI")]
+        [SerializeField] private UIBillboard uiBillboard;
 
         private FiniteStateMachine<Miner> fsm;
         private MinerInventory inventory;
@@ -47,6 +51,8 @@ namespace Miners
             miningState.Initialize(this);
             returningState.Initialize(this);
             unloadingState.Initialize(this);
+
+            UpdateBillboard();
         }
 
         void Start()
@@ -88,9 +94,20 @@ namespace Miners
             if (currentTargetMine != null)
                 currentTargetMine.SetOccupied(false);
 
-            currentTargetMine = goldMineManager.GetBestAvailableMine(transform.position);
+            currentTargetMine = mineManager.GetBestAvailableMine(transform.position);
             if (currentTargetMine != null)
                 currentTargetMine.SetOccupied(true);
+        }
+
+        public void UpdateBillboard()
+        {
+            if (uiBillboard != null)
+                uiBillboard.SetGold(inventory.CurrentGold);
+        }
+
+        public void ReportUnloadedGold()
+        {
+            mineManager.ReportGoldDeposited(inventory.CurrentGold);
         }
     }
 }
