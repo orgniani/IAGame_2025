@@ -4,6 +4,7 @@ using StateMachine;
 using Nodes;
 using Mines;
 using UI;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace Miners
 {
@@ -33,9 +34,11 @@ namespace Miners
         private bool _isWaitingForMine = false;
 
         public GoldMine CurrentMine => currentTargetMine;
+        public MineManager MineManager => mineManager;
         public float MiningEfficiency => miningEfficiency;
         public MinerInventory Inventory => inventory;
         public Transform BasePosition => basePosition;
+        public bool IsInitialized { get; private set; } = false;
 
         public UnityEvent OnStartMovingToMine = new UnityEvent();
         public UnityEvent OnReachedMine = new UnityEvent();
@@ -77,10 +80,15 @@ namespace Miners
             fsm = new FiniteStateMachine<Miner>(states, events, idleState);
 
             fsm.ConfigureTransition(idleState, goingToMineState, OnStartMovingToMine);
+            fsm.ConfigureTransition(miningState, goingToMineState, OnStartMovingToMine);
+            
             fsm.ConfigureTransition(goingToMineState, miningState, OnReachedMine);
+            
             fsm.ConfigureTransition(miningState, returningState, OnStartReturning);
             fsm.ConfigureTransition(returningState, unloadingState, OnReachedBase);
             fsm.ConfigureTransition(unloadingState, idleState, OnUnloadFinished);
+
+            IsInitialized = true;
         }
 
         void Update()

@@ -49,6 +49,17 @@ namespace Mines
             return null;
         }
 
+        public bool AllMinesDepleted()
+        {
+            foreach (var mine in goldMines)
+            {
+                if (mine != null && !mine.IsDepleted)
+                    return false;
+            }
+
+            return true;
+        }
+
         public void RegisterMine(GoldMine mine)
         {
             if (!goldMines.Contains(mine))
