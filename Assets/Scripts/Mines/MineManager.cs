@@ -14,6 +14,15 @@ namespace Mines
         [SerializeField] private UIHUD hud;
         private int _totalGold = 0;
 
+        private void Awake()
+        {
+            foreach (var mine in goldMines)
+            {
+                if (mine != null)
+                    RegisterMine(mine);
+            }
+        }
+
         public void ReportGoldDeposited(int amount)
         {
             _totalGold += amount;
@@ -51,19 +60,18 @@ namespace Mines
 
         public bool AllMinesDepleted()
         {
-            foreach (var mine in goldMines)
-            {
-                if (mine != null && !mine.IsDepleted)
-                    return false;
-            }
+            if (goldMines.Count == 0)
+                return true;
 
-            return true;
+            return false;
         }
 
         public void RegisterMine(GoldMine mine)
         {
             if (!goldMines.Contains(mine))
                 goldMines.Add(mine);
+
+            mine.SetManager(this);
         }
 
         public void UnregisterMine(GoldMine mine)

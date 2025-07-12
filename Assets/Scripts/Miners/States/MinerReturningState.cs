@@ -21,8 +21,10 @@ namespace Miners
         {
             Debug.Log($"[FSM] Entering {nameof(MinerReturningState)} on {owner.name}");
 
+            owner.SelectNewBase();
+
             _agent.MovementSpeed = returnSpeed;
-            _agent.Destination = owner.BasePosition.position;
+            _agent.Destination = owner.CurrentBase.Position;
         }
 
         public override void Update()

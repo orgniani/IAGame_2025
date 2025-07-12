@@ -5,6 +5,7 @@ using Nodes;
 using Mines;
 using UI;
 using static UnityEngine.UI.GridLayoutGroup;
+using Bases;
 
 namespace Miners
 {
@@ -20,7 +21,7 @@ namespace Miners
 
         [Header("Common References")]
         [SerializeField] private MineManager mineManager;
-        [SerializeField] private Transform basePosition;
+        [SerializeField] private BaseManager baseManager;
 
         [Header("Mining Settings")]
         [SerializeField, Range(0.1f, 10f)] private float miningEfficiency = 1f;
@@ -28,16 +29,19 @@ namespace Miners
         [Header("UI")]
         [SerializeField] private UIBillboard uiBillboard;
 
-        private FiniteStateMachine<Miner> fsm;
-        private MinerInventory inventory;
-        private GoldMine currentTargetMine;
+        private FiniteStateMachine<Miner> _fsm;
+        private MinerInventory _inventory;
+
+        private GoldMine _currentTargetMine;
+        private BasePoint _currentBase;
+
         private bool _isWaitingForMine = false;
 
-        public GoldMine CurrentMine => currentTargetMine;
+        public GoldMine CurrentMine => _currentTargetMine;
         public MineManager MineManager => mineManager;
         public float MiningEfficiency => miningEfficiency;
-        public MinerInventory Inventory => inventory;
-        public Transform BasePosition => basePosition;
+        public MinerInventory Inventory => _inventory;
+        public BasePoint CurrentBase => _currentBase;
         public bool IsInitialized { get; private set; } = false;
 
         public UnityEvent OnStartMovingToMine = new UnityEvent();
@@ -48,7 +52,7 @@ namespace Miners
 
         void Awake()
         {
-            inventory = GetComponent<MinerInventory>();
+            _inventory = GetComponent<MinerInventory>();
 
             idleState.Initialize(this);
             goingToMineState.Initialize(this);
@@ -77,28 +81,28 @@ namespace Miners
             OnUnloadFinished
             };
 
-            fsm = new FiniteStateMachine<Miner>(states, events, idleState);
+            _fsm = new FiniteStateMachine<Miner>(states, events, idleState);
 
-            fsm.ConfigureTransition(idleState, goingToMineState, OnStartMovingToMine);
-            fsm.ConfigureTransition(miningState, goingToMineState, OnStartMovingToMine);
+            _fsm.ConfigureTransition(idleState, goingToMineState, OnStartMovingToMine);
+            _fsm.ConfigureTransition(miningState, goingToMineState, OnStartMovingToMine);
             
-            fsm.ConfigureTransition(goingToMineState, miningState, OnReachedMine);
+            _fsm.ConfigureTransition(goingToMineState, miningState, OnReachedMine);
             
-            fsm.ConfigureTransition(miningState, returningState, OnStartReturning);
-            fsm.ConfigureTransition(returningState, unloadingState, OnReachedBase);
-            fsm.ConfigureTransition(unloadingState, idleState, OnUnloadFinished);
+            _fsm.ConfigureTransition(miningState, returningState, OnStartReturning);
+            _fsm.ConfigureTransition(returningState, unloadingState, OnReachedBase);
+            _fsm.ConfigureTransition(unloadingState, idleState, OnUnloadFinished);
 
             IsInitialized = true;
         }
 
         void Update()
         {
-            fsm.Update();
+            _fsm.Update();
         }
 
         public void SelectNewMine()
         {
-            if (currentTargetMine != null || _isWaitingForMine)
+            if (_currentTargetMine != null || _isWaitingForMine)
                 return;
 
             _isWaitingForMine = true;
@@ -107,7 +111,7 @@ namespace Miners
 
             if (newMine != null)
             {
-                currentTargetMine = newMine;
+                _currentTargetMine = newMine;
                 Debug.Log($"[Miner] {name} successfully reserved {newMine.name}");
             }
             else
@@ -120,26 +124,52 @@ namespace Miners
 
         public void ClearCurrentMine()
         {
-            if (currentTargetMine != null)
+            if (_currentTargetMine != null)
             {
-                currentTargetMine.ReleaseReservation(this);
-                Debug.Log($"[Miner] {name} released {currentTargetMine.name}");
-                currentTargetMine = null;
+                _currentTargetMine.ReleaseReservation(this);
+                Debug.Log($"[Miner] {name} released {_currentTargetMine.name}");
+                _currentTargetMine = null;
             }
 
             _isWaitingForMine = false;
         }
 
+        public void SelectNewBase()
+        {
+            if (_currentBase != null)
+                return;
+
+            var newBase = baseManager.GetBestAvailableBase(transform.position, this);
+            if (newBase != null)
+            {
+                _currentBase = newBase;
+                Debug.Log($"[Miner] {name} reserved base {newBase.name}");
+            }
+            else
+            {
+                Debug.LogWarning($"[Miner] {name} could not find an available base.");
+            }
+        }
+
+        public void ClearCurrentBase()
+        {
+            if (_currentBase != null)
+            {
+                _currentBase.ReleaseReservation(this);
+                Debug.Log($"[Miner] {name} released base {_currentBase.name}");
+                _currentBase = null;
+            }
+        }
 
         public void UpdateBillboard()
         {
             if (uiBillboard != null)
-                uiBillboard.SetGold(inventory.CurrentGold);
+                uiBillboard.SetGold(_inventory.CurrentGold);
         }
 
         public void ReportUnloadedGold()
         {
-            mineManager.ReportGoldDeposited(inventory.CurrentGold);
+            mineManager.ReportGoldDeposited(_inventory.CurrentGold);
         }
     }
 }

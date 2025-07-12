@@ -21,6 +21,7 @@ namespace Miners
         {
             Debug.Log($"[FSM] Entering {nameof(MinerGoingToMineState)} on {owner.name}");
 
+            owner.ClearCurrentBase();
             _agent.MovementSpeed = moveSpeed;
 
             if (owner.CurrentMine != null)

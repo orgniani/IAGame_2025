@@ -27,7 +27,7 @@ namespace Miners
             if (owner.CurrentMine != null)
             {
                 Debug.Log($"[FSM] {owner.name} found mine immediately");
-                _retryCoroutine = _coroutineHost.StartCoroutine(RetryMineSearchLoop());
+                _retryCoroutine = _coroutineHost.StartCoroutine(SearchForMine());
             }
             else if (owner.MineManager.AllMinesDepleted())
             {
@@ -48,7 +48,7 @@ namespace Miners
             Debug.Log($"[FSM] Exiting {nameof(MinerIdleState)} on {owner.name}");
         }
 
-        private IEnumerator RetryMineSearchLoop()
+        private IEnumerator SearchForMine()
         {
             yield return new WaitUntil(() => owner.IsInitialized);
 
