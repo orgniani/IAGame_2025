@@ -29,12 +29,14 @@ namespace Miners
 
         private IEnumerator WaitThenGoToMine()
         {
-            owner.SelectNewMine();
-
             yield return new WaitForSeconds(waitTime);
+
+            owner.SelectNewMine();
 
             if (owner.CurrentMine != null)
                 owner.OnStartMovingToMine.Invoke();
+            else
+                owner.OnStartReturning.Invoke();
         }
     }
 }

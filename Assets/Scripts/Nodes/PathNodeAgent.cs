@@ -33,24 +33,27 @@ namespace Nodes
 
         public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
 
-
-        void Update ()
+        void Update()
         {
             if (Destination == null || HasReachedDestination)
                 return;
 
             Vector3 targetPosition = targetNode.Position;
-            Vector3 diff = targetPosition - transform.position;
-            Quaternion targetRotation = Quaternion.LookRotation(diff.normalized, transform.up);
+            Vector3 toTarget = targetPosition - transform.position;
+            float distanceSqr = toTarget.sqrMagnitude;
+
             float maxDistanceDelta = movementSpeed * Time.deltaTime;
             float maxDegreesDelta = rotateSpeed * Time.deltaTime;
 
-            Vector3 updatedPosition = Vector3.MoveTowards(transform.position, targetPosition, maxDistanceDelta);
-            Quaternion updatedRotation = Quaternion.RotateTowards(transform.rotation, targetRotation, maxDegreesDelta);
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, maxDistanceDelta);
 
-            transform.SetPositionAndRotation(updatedPosition, updatedRotation);
+            if (distanceSqr > 0.0001f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(toTarget.normalized, transform.up);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, maxDegreesDelta);
+            }
 
-            if (diff.sqrMagnitude <= Mathf.Epsilon * Mathf.Epsilon)
+            if (distanceSqr <= 0.01f)
             {
                 if (currentPath.Count > 0)
                     targetNode = currentPath.Pop();

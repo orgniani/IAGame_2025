@@ -74,8 +74,7 @@ namespace Miners
 
         private void HandlePostMining(GoldMine mine)
         {
-            if (mine != null)
-                mine.SetOccupied(false);
+            owner.ClearCurrentMine();
 
             if (owner.Inventory.IsFull)
             {

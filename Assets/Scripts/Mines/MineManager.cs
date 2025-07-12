@@ -1,4 +1,5 @@
 using Managers;
+using Miners;
 using System.Collections.Generic;
 using UI;
 using UnityEngine;
@@ -19,14 +20,14 @@ namespace Mines
             hud?.SetTotalGold(_totalGold);
         }
 
-        public GoldMine GetBestAvailableMine(Vector3 minerPosition)
+        public GoldMine GetBestAvailableMine(Vector3 minerPosition, Miner requester)
         {
             GoldMine bestMine = null;
             int bestPathLength = int.MaxValue;
 
             foreach (var mine in goldMines)
             {
-                if (mine == null || mine.IsOccupied || mine.IsDepleted)
+                if (mine == null || mine.IsDepleted || mine.IsOccupied || mine.ReservedBy == requester)
                     continue;
 
                 var path = pathfindingManager.CreatePath(minerPosition, mine.Position);
@@ -34,6 +35,7 @@ namespace Mines
                     continue;
 
                 int pathLength = path.Count;
+
                 if (pathLength < bestPathLength)
                 {
                     bestMine = mine;
@@ -41,7 +43,10 @@ namespace Mines
                 }
             }
 
-            return bestMine;
+            if (bestMine != null && bestMine.TryReserve(requester))
+                return bestMine;
+
+            return null;
         }
 
         public void RegisterMine(GoldMine mine)

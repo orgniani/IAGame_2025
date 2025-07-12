@@ -30,6 +30,7 @@ namespace Miners
         private FiniteStateMachine<Miner> fsm;
         private MinerInventory inventory;
         private GoldMine currentTargetMine;
+        private bool _isWaitingForMine = false;
 
         public GoldMine CurrentMine => currentTargetMine;
         public float MiningEfficiency => miningEfficiency;
@@ -57,8 +58,6 @@ namespace Miners
 
         void Start()
         {
-            SelectNewMine();
-
             FsmState<Miner>[] states = {
                 idleState,
                 goingToMineState,
@@ -91,13 +90,38 @@ namespace Miners
 
         public void SelectNewMine()
         {
-            if (currentTargetMine != null)
-                currentTargetMine.SetOccupied(false);
+            if (currentTargetMine != null || _isWaitingForMine)
+                return;
 
-            currentTargetMine = mineManager.GetBestAvailableMine(transform.position);
-            if (currentTargetMine != null)
-                currentTargetMine.SetOccupied(true);
+            _isWaitingForMine = true;
+
+            var newMine = mineManager.GetBestAvailableMine(transform.position, this);
+
+            if (newMine != null)
+            {
+                currentTargetMine = newMine;
+                Debug.Log($"[Miner] {name} successfully reserved {newMine.name}");
+            }
+            else
+            {
+                Debug.LogWarning($"[Miner] {name} could not find a valid mine.");
+            }
+
+            _isWaitingForMine = false;
         }
+
+        public void ClearCurrentMine()
+        {
+            if (currentTargetMine != null)
+            {
+                currentTargetMine.ReleaseReservation(this);
+                Debug.Log($"[Miner] {name} released {currentTargetMine.name}");
+                currentTargetMine = null;
+            }
+
+            _isWaitingForMine = false;
+        }
+
 
         public void UpdateBillboard()
         {
