@@ -21,6 +21,7 @@ namespace Miners
         {
             Debug.Log($"[FSM] Entering {nameof(MinerGoingToMineState)} on {owner.name}");
 
+            owner.ClearCurrentBase();
             _agent.MovementSpeed = moveSpeed;
 
             if (owner.CurrentMine != null)
@@ -29,6 +30,8 @@ namespace Miners
 
         public override void Update()
         {
+            if (!IsMineValid()) return;
+
             if (_agent.HasReachedDestination)
             {
                 Debug.Log($"[FSM] {owner.name} reached the mine");
@@ -37,5 +40,28 @@ namespace Miners
         }
 
         public override void Exit() { Debug.Log($"[FSM] Exiting {nameof(MinerGoingToMineState)} on {owner.name}"); }
+
+        private bool IsMineValid()
+        {
+            var mine = owner.CurrentMine;
+
+            if (mine == null || mine.IsDepleted || mine.ReservedBy != owner)
+            {
+                Debug.Log($"[FSM] {owner.name} lost their mine en route");
+
+                owner.SelectNewMine();
+
+                if (owner.CurrentMine != null)
+                {
+                    _agent.Destination = owner.CurrentMine.Position;
+                    Debug.Log($"[FSM] {owner.name} switching to new mine: {owner.CurrentMine.name}");
+                }
+                else owner.OnStartReturning.Invoke();
+
+                return false;
+            }
+
+            return true;
+        }
     }
 }
