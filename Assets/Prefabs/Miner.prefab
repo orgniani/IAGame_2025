@@ -65,12 +65,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Gold: 05
+  m_text: 'Gold: 5
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5ab28abcfdc85a144a3c8cf673fce1a4, type: 2}
+  m_sharedMaterial: {fileID: 2137670499336209689, guid: 5ab28abcfdc85a144a3c8cf673fce1a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.5
+  m_fontSize: 0.65
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -186,8 +186,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a7c7a262b898f94ebad105c9fbf315c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 3
-  rotateSpeed: 90
+  movementSpeed: 2
+  rotateSpeed: 240
 --- !u!114 &6890925617814285620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,7 +212,7 @@ MonoBehaviour:
   unloadingState:
     unloadTime: 2
   mineManager: {fileID: 0}
-  basePosition: {fileID: 0}
+  baseManager: {fileID: 0}
   miningEfficiency: 1
   uiBillboard: {fileID: 4827196315438069205}
   OnStartMovingToMine:
