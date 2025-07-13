@@ -676,6 +676,10 @@ PrefabInstance:
       propertyPath: goldMineManager
       value: 
       objectReference: {fileID: 1208019620}
+    - target: {fileID: 6890925617814285620, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
+      propertyPath: miningEfficiency
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 9082514893645370767, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 2
@@ -4314,6 +4318,10 @@ PrefabInstance:
       propertyPath: mineManager
       value: 
       objectReference: {fileID: 1208019620}
+    - target: {fileID: 6890925617814285620, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
+      propertyPath: miningEfficiency
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 9082514893645370767, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 2
