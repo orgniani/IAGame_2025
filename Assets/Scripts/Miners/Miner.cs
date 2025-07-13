@@ -4,8 +4,9 @@ using StateMachine;
 using Nodes;
 using Mines;
 using UI;
-using static UnityEngine.UI.GridLayoutGroup;
 using Bases;
+using Managers;
+using Helpers;
 
 namespace Miners
 {
@@ -50,8 +51,10 @@ namespace Miners
         public UnityEvent OnReachedBase = new UnityEvent();
         public UnityEvent OnUnloadFinished = new UnityEvent();
 
-        void Awake()
+        private void Awake()
         {
+            ValidateReferences();
+
             _inventory = GetComponent<MinerInventory>();
 
             idleState.Initialize(this);
@@ -63,7 +66,18 @@ namespace Miners
             UpdateBillboard();
         }
 
-        void Start()
+        private void OnEnable()
+        {
+            PathfindingManager.Instance.OnStrategyChanged += OnPathfindingStrategyChanged;
+        }
+
+        private void OnDisable()
+        {
+            if (PathfindingManager.Instance)
+                PathfindingManager.Instance.OnStrategyChanged -= OnPathfindingStrategyChanged;
+        }
+
+        private void Start()
         {
             FsmState<Miner>[] states = {
                 idleState,
@@ -95,7 +109,7 @@ namespace Miners
             IsInitialized = true;
         }
 
-        void Update()
+        private void Update()
         {
             _fsm.Update();
         }
@@ -170,6 +184,35 @@ namespace Miners
         public void ReportUnloadedGold()
         {
             mineManager.ReportGoldDeposited(_inventory.CurrentGold);
+        }
+
+        private void OnPathfindingStrategyChanged()
+        {
+            if (!IsInitialized)
+                return;
+
+            if (_fsm.CurrentState == goingToMineState && _currentTargetMine != null)
+            {
+                var agent = GetComponent<PathNodeAgent>();
+                agent.Destination = _currentTargetMine.Position;
+
+                Debug.Log($"[Miner] {name} recalculated path to mine due to strategy change");
+            }
+
+            else if (_fsm.CurrentState == returningState && _currentBase != null)
+            {
+                var agent = GetComponent<PathNodeAgent>();
+                agent.Destination = _currentBase.Position;
+
+                Debug.Log($"[Miner] {name} recalculated path to base due to strategy change");
+            }
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(mineManager, nameof(mineManager), this);
+            ReferenceValidator.Validate(baseManager, nameof(baseManager), this);
+            ReferenceValidator.Validate(uiBillboard, nameof(uiBillboard), this);
         }
     }
 }

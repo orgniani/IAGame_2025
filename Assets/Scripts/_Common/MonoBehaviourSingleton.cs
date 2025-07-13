@@ -13,9 +13,6 @@ public class MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
             if (!instance)
                 instance = FindFirstObjectByType<T>();
 
-            if (!instance)
-                instance = new GameObject(typeof(T).Name).AddComponent<T>();
-
             return instance;
         } 
     }

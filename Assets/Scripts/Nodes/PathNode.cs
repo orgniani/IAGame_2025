@@ -18,5 +18,6 @@ namespace Nodes
         public Vector3 Position { get; set; } = Vector3.zero;
         public float CostMultiplier { get; set; } = 1f;
         public float AccumulatedCost { get; set; } = 0f;
+        public float HeuristicCost { get; set; } = 0f;
     }
 }

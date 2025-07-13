@@ -24,15 +24,16 @@ namespace Miners
 
             _owner.SelectNewMine();
 
-            if (_owner.CurrentMine != null)
-            {
-                Debug.Log($"[FSM] {_owner.name} found mine immediately");
-                _retryCoroutine = _coroutineHost.StartCoroutine(SearchForMine());
-            }
-            else if (_owner.MineManager.AllMinesDepleted())
+            if (_owner.MineManager.AllMinesDepleted())
             {
                 Debug.Log($"[FSM] {_owner.name} all mines depleted, going to base");
                 _owner.OnStartReturning?.Invoke();
+            }
+
+            else
+            {
+                Debug.Log($"[FSM] {_owner.name} starting search for mine...");
+                _retryCoroutine = _coroutineHost.StartCoroutine(SearchForMine());
             }
         }
 
@@ -60,7 +61,7 @@ namespace Miners
 
                 if (_owner.CurrentMine != null)
                 {
-                    Debug.Log($"[FSM] {_owner.name} found mine on retry");
+                    Debug.Log($"[FSM] {_owner.name} found mine.");
                     _owner.OnStartMovingToMine?.Invoke();
                     yield break;
                 }

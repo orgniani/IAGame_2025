@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Nodes;
+using System;
 
 namespace Managers
 {
@@ -17,10 +18,13 @@ namespace Managers
         [SerializeField] private PathGenerator pathGenerator = new PathGenerator();
         [SerializeField] private PathfindingStrategy pathfindingStrategy = PathfindingStrategy.BreadthFirst;
 
+        private PathNode _destinationNodeCache;
+
         private List<PathNode> pathNodes;
         private List<PathNode> openNodes;
         private List<PathNode> closedNodes;
 
+        public event Action OnStrategyChanged;
 
         void Awake ()
         {
@@ -50,6 +54,14 @@ namespace Managers
         private void GeneratePath ()
         {
             pathNodes = pathGenerator.GenerateNodes();
+        }
+
+        public void SetStrategy(PathfindingStrategy newStrategy)
+        {
+            pathfindingStrategy = newStrategy;
+            OnStrategyChanged?.Invoke();
+
+            Debug.Log($"[Pathfinding] Strategy set to {newStrategy}");
         }
 
         private PathNode FindClosestNode (Vector3 position)
@@ -120,7 +132,7 @@ namespace Managers
             closedNodes.Add(node);
         }
 
-        private void OpenAdjacentNodes (PathNode parentNode)
+        private void OpenAdjacentNodes(PathNode parentNode)
         {
             foreach (PathNode pathNode in parentNode.AdjacentNodes)
             {
@@ -135,6 +147,12 @@ namespace Managers
                     case PathfindingStrategy.AStar:
                         float sqrDistance = (parentNode.Position - pathNode.Position).sqrMagnitude;
                         pathNode.AccumulatedCost = parentNode.AccumulatedCost + sqrDistance * pathNode.CostMultiplier;
+
+                        if (pathfindingStrategy == PathfindingStrategy.AStar)
+                        {
+                            float h = (_destinationNodeCache.Position - pathNode.Position).sqrMagnitude;
+                            pathNode.HeuristicCost = h;
+                        }
                         break;
                 }
 
@@ -174,25 +192,26 @@ namespace Managers
             
             return openNode;
         }
-        
-        private PathNode GetNextOpenNodeAStar (PathNode destinationNode)
-        {
-            PathNode openNode = openNodes[0];
 
-            float closestSqrDistance = (destinationNode.Position - openNode.Position).sqrMagnitude;
+        private PathNode GetNextOpenNodeAStar(PathNode destinationNode)
+        {
+            PathNode bestNode = null;
+            float bestF = float.MaxValue;
 
             foreach (PathNode pathNode in openNodes)
             {
-                float sqrDistance = (destinationNode.Position - pathNode.Position).sqrMagnitude;
+                float g = pathNode.AccumulatedCost;
+                float h = (destinationNode.Position - pathNode.Position).sqrMagnitude;
+                float f = g + h;
 
-                if (pathNode.AccumulatedCost <= openNode.AccumulatedCost && sqrDistance < closestSqrDistance)
+                if (f < bestF)
                 {
-                    openNode = pathNode;
-                    closestSqrDistance = sqrDistance;
+                    bestF = f;
+                    bestNode = pathNode;
                 }
             }
-            
-            return openNode;
+
+            return bestNode;
         }
 
         private Stack<PathNode> GeneratePath (PathNode destinationNode)
@@ -212,6 +231,8 @@ namespace Managers
 
         public Stack<PathNode> CreatePath (Vector3 origin, Vector3 destination)
         {
+            _destinationNodeCache = FindClosestNode(destination);
+
             Stack<PathNode> path = null;
 
             PathNode originNode = FindClosestNode(origin);

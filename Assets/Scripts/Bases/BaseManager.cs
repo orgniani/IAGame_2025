@@ -1,3 +1,4 @@
+using Helpers;
 using Managers;
 using Miners;
 using System.Collections.Generic;
@@ -7,11 +8,14 @@ namespace Bases
 {
     public class BaseManager : MonoBehaviour
     {
-        [SerializeField] private PathfindingManager pathfindingManager;
         [SerializeField] private List<BasePoint> basePoints = new();
+        private PathfindingManager _pathfindingManager;
 
         private void Awake()
         {
+            _pathfindingManager = PathfindingManager.Instance;
+            ValidateReferences();
+
             foreach (var point in basePoints)
             {
                 if (point != null)
@@ -43,7 +47,7 @@ namespace Bases
                 if (point == null || point.IsOccupied || point.ReservedBy == requester)
                     continue;
 
-                var path = pathfindingManager.CreatePath(minerPosition, point.Position);
+                var path = _pathfindingManager.CreatePath(minerPosition, point.Position);
                 if (path == null)
                     continue;
 
@@ -59,6 +63,14 @@ namespace Bases
                 return bestPoint;
 
             return null;
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(_pathfindingManager, nameof(_pathfindingManager), this);
+
+            foreach (var point in basePoints)
+                ReferenceValidator.Validate(point, nameof(point), this);
         }
     }
 }

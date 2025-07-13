@@ -1,3 +1,5 @@
+using Bases;
+using Helpers;
 using Managers;
 using Miners;
 using System.Collections.Generic;
@@ -8,14 +10,17 @@ namespace Mines
 {
     public class MineManager : MonoBehaviour
     {
-        [SerializeField] private PathfindingManager pathfindingManager;
         [SerializeField] private List<GoldMine> goldMines = new();
-
         [SerializeField] private UIHUD hud;
+        
+        private PathfindingManager _pathfindingManager;
         private int _totalGold = 0;
 
         private void Awake()
         {
+            _pathfindingManager = PathfindingManager.Instance;
+            ValidateReferences();
+
             foreach (var mine in goldMines)
             {
                 if (mine != null)
@@ -39,7 +44,7 @@ namespace Mines
                 if (mine == null || mine.IsDepleted || mine.IsOccupied || mine.ReservedBy == requester)
                     continue;
 
-                var path = pathfindingManager.CreatePath(minerPosition, mine.Position);
+                var path = _pathfindingManager.CreatePath(minerPosition, mine.Position);
                 if (path == null)
                     continue;
 
@@ -78,6 +83,14 @@ namespace Mines
         {
             if (goldMines.Contains(mine))
                 goldMines.Remove(mine);
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(_pathfindingManager, nameof(_pathfindingManager), this);
+
+            foreach (var mine in goldMines)
+                ReferenceValidator.Validate(mine, nameof(mine), this);
         }
     }
 }

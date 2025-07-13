@@ -1,3 +1,4 @@
+using Helpers;
 using Miners;
 using UnityEngine;
 
@@ -14,6 +15,11 @@ namespace Mines
         public bool IsDepleted => goldAmount <= 0;
         public Vector3 Position => transform.position;
         public Miner ReservedBy { get; private set; }
+
+        private void Awake()
+        {
+            ReferenceValidator.Validate(goldVisual, nameof(goldVisual), this);
+        }
 
         public void SetManager(MineManager manager)
         {
