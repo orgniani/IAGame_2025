@@ -6,8 +6,13 @@ namespace Nodes
 {
     public class PathNodeAgent : MonoBehaviour
     {
+        [Header("Movement Settings")]
         [SerializeField] private float movementSpeed = 2f;
         [SerializeField] private float rotateSpeed = 45f;
+
+        [Header("Idle Settings")]
+        [SerializeField] private bool rotateTowardDestinationWhenIdle = true;
+        [SerializeField] private float idleRotationSpeed = 360f;
 
         private Stack<PathNode> _currentPath;
         private PathNode _targetNode;
@@ -16,7 +21,6 @@ namespace Nodes
         private Vector3 _lastPosition;
         private Vector3 _currentVelocity;
         public Vector3 CurrentVelocity => _currentVelocity;
-
 
         public bool HasReachedDestination { get; private set; } = false;
         public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
@@ -39,9 +43,17 @@ namespace Nodes
 
         void Update()
         {
-            if (Destination == null || HasReachedDestination)
+            if (Destination == null)
             {
                 _currentVelocity = Vector3.zero;
+                return;
+            }
+
+            if (HasReachedDestination)
+            {
+                _currentVelocity = Vector3.zero;
+                LookAtTarget();
+
                 return;
             }
 
@@ -72,6 +84,24 @@ namespace Nodes
             }
         }
 
+        private void LookAtTarget()
+        {
+            if (rotateTowardDestinationWhenIdle && Destination.HasValue)
+            {
+                Vector3 lookDir = Destination.Value - transform.position;
+                lookDir.y = 0f;
+
+                if (lookDir.sqrMagnitude > 0.01f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(lookDir.normalized, transform.up);
+                    transform.rotation = Quaternion.RotateTowards(
+                        transform.rotation,
+                        targetRot,
+                        idleRotationSpeed * Time.deltaTime
+                    );
+                }
+            }
+        }
 
 #if UNITY_EDITOR
         void OnDrawGizmos ()

@@ -608,6 +608,10 @@ PrefabInstance:
       propertyPath: movementSpeed
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 790642188305773925, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
+      propertyPath: rotateTowardDestinationWhenIdle
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 969507062849263540, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
       propertyPath: m_Name
       value: Miner (1)
@@ -4262,6 +4266,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 790642188305773925, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
+      propertyPath: rotateTowardDestinationWhenIdle
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 969507062849263540, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
       propertyPath: m_Name
       value: Miner (3)
@@ -7870,6 +7878,10 @@ PrefabInstance:
       propertyPath: movementSpeed
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 790642188305773925, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
+      propertyPath: rotateTowardDestinationWhenIdle
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 969507062849263540, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
       propertyPath: m_Name
       value: Miner (2)
@@ -8053,6 +8065,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 790642188305773925, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
+      propertyPath: rotateTowardDestinationWhenIdle
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 969507062849263540, guid: 9a0f2e5babf70a24ead854d34ed432ee, type: 3}
       propertyPath: m_Name
       value: Miner

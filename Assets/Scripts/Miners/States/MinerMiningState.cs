@@ -11,7 +11,6 @@ namespace Miners
     {
         [SerializeField] private int goldPerCycle = 1;
         [SerializeField] private float secondsPerCycle = 1f;
-        [SerializeField] private float lookAtRotationSpeed = 360f;
 
         private MonoBehaviour _coroutineHost;
         private Coroutine _miningRoutine;
@@ -32,7 +31,7 @@ namespace Miners
                 return;
             }
 
-            _miningRoutine = _coroutineHost.StartCoroutine(RotateTowardsMineThenMine());
+            _miningRoutine = _coroutineHost.StartCoroutine(MiningLoop());
         }
 
         public override void Exit()
@@ -44,31 +43,6 @@ namespace Miners
         }
 
         public override void Update() { }
-
-        private IEnumerator RotateTowardsMineThenMine()
-        {
-            Transform minerTransform = _owner.transform;
-            Vector3 directionToMine = _owner.CurrentMine.Position - minerTransform.position;
-            directionToMine.y = 0f;
-
-            if (directionToMine.sqrMagnitude > 0.01f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(directionToMine.normalized, Vector3.up);
-
-                while (Quaternion.Angle(minerTransform.rotation, targetRotation) > 1f)
-                {
-                    minerTransform.rotation = Quaternion.RotateTowards(
-                        minerTransform.rotation,
-                        targetRotation,
-                        lookAtRotationSpeed * Time.deltaTime
-                    );
-
-                    yield return null;
-                }
-            }
-
-            _miningRoutine = _coroutineHost.StartCoroutine(MiningLoop());
-        }
 
         private IEnumerator MiningLoop()
         {
