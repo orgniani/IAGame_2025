@@ -6,15 +6,25 @@ namespace Nodes
 {
     public class PathNodeAgent : MonoBehaviour
     {
+        [Header("Movement Settings")]
         [SerializeField] private float movementSpeed = 2f;
         [SerializeField] private float rotateSpeed = 45f;
+
+        [Header("Idle Settings")]
+        [SerializeField] private bool rotateTowardDestinationWhenIdle = true;
+        [SerializeField] private float idleRotationSpeed = 360f;
 
         private Stack<PathNode> _currentPath;
         private PathNode _targetNode;
         private Vector3? _destination;
 
+        private Vector3 _lastPosition;
+        private Vector3 _currentVelocity;
+        public Vector3 CurrentVelocity => _currentVelocity;
+
         public bool HasReachedDestination { get; private set; } = false;
-        
+        public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
+
         public Vector3? Destination 
         { 
             get => _destination;
@@ -31,12 +41,24 @@ namespace Nodes
             }
         }
 
-        public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
-
         void Update()
         {
-            if (Destination == null || HasReachedDestination)
+            if (Destination == null)
+            {
+                _currentVelocity = Vector3.zero;
                 return;
+            }
+
+            if (HasReachedDestination)
+            {
+                _currentVelocity = Vector3.zero;
+                LookAtTarget();
+
+                return;
+            }
+
+            _currentVelocity = (transform.position - _lastPosition) / Time.deltaTime;
+            _lastPosition = transform.position;
 
             Vector3 targetPosition = _targetNode.Position;
             Vector3 toTarget = targetPosition - transform.position;
@@ -59,6 +81,25 @@ namespace Nodes
                     _targetNode = _currentPath.Pop();
                 else
                     HasReachedDestination = true;
+            }
+        }
+
+        private void LookAtTarget()
+        {
+            if (rotateTowardDestinationWhenIdle && Destination.HasValue)
+            {
+                Vector3 lookDir = Destination.Value - transform.position;
+                lookDir.y = 0f;
+
+                if (lookDir.sqrMagnitude > 0.01f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(lookDir.normalized, transform.up);
+                    transform.rotation = Quaternion.RotateTowards(
+                        transform.rotation,
+                        targetRot,
+                        idleRotationSpeed * Time.deltaTime
+                    );
+                }
             }
         }
 
