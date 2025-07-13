@@ -1,3 +1,4 @@
+using Helpers;
 using TMPro;
 using UnityEngine;
 
@@ -8,6 +9,10 @@ namespace UI
         [SerializeField] private TMP_Text collectedGoldText;
         private Camera _mainCamera;
 
+        private void Awake()
+        {
+            ReferenceValidator.Validate(collectedGoldText, nameof(collectedGoldText), this);
+        }
         private void Start()
         {
             _mainCamera = Camera.main;

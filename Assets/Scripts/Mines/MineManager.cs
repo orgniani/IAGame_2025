@@ -1,3 +1,5 @@
+using Bases;
+using Helpers;
 using Managers;
 using Miners;
 using System.Collections.Generic;
@@ -16,13 +18,14 @@ namespace Mines
 
         private void Awake()
         {
+            _pathfindingManager = PathfindingManager.Instance;
+            ValidateReferences();
+
             foreach (var mine in goldMines)
             {
                 if (mine != null)
                     RegisterMine(mine);
             }
-
-            _pathfindingManager = PathfindingManager.Instance;
         }
 
         public void ReportGoldDeposited(int amount)
@@ -80,6 +83,14 @@ namespace Mines
         {
             if (goldMines.Contains(mine))
                 goldMines.Remove(mine);
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(_pathfindingManager, nameof(_pathfindingManager), this);
+
+            foreach (var mine in goldMines)
+                ReferenceValidator.Validate(mine, nameof(mine), this);
         }
     }
 }

@@ -6,14 +6,14 @@ namespace StateMachine
 {
     public class FiniteStateMachine<T>
     {
-        private DoubleEntryTable<FsmState<T>, UnityEvent, FsmState<T>> fsmTable;
+        private DoubleEntryTable<FsmState<T>, UnityEvent, FsmState<T>> _fsmTable;
         private FsmState<T> _currentState;
 
         public FsmState<T> CurrentState => _currentState;
 
         public FiniteStateMachine (FsmState<T>[] states, UnityEvent[] transitionEvents, FsmState<T> entryState)
         {
-            fsmTable = new DoubleEntryTable<FsmState<T>, UnityEvent, FsmState<T>>(states, transitionEvents);
+            _fsmTable = new DoubleEntryTable<FsmState<T>, UnityEvent, FsmState<T>>(states, transitionEvents);
             _currentState = entryState;
 
             _currentState.Enter();
@@ -21,7 +21,7 @@ namespace StateMachine
 
         private void OnTriggerTransition (UnityEvent transitionEvent)
         {
-            FsmState<T> targetState = fsmTable[_currentState, transitionEvent];
+            FsmState<T> targetState = _fsmTable[_currentState, transitionEvent];
 
             if (targetState != null)
             {
@@ -36,7 +36,7 @@ namespace StateMachine
 
         public void ConfigureTransition (FsmState<T> sourceState, FsmState<T> targetState, UnityEvent transitionEvent)
         {
-            fsmTable[sourceState, transitionEvent] = targetState;
+            _fsmTable[sourceState, transitionEvent] = targetState;
             transitionEvent.AddListener(() => OnTriggerTransition(transitionEvent));
         }
 

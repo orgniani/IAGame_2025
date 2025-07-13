@@ -1,3 +1,4 @@
+using Helpers;
 using Managers;
 using Miners;
 using System.Collections.Generic;
@@ -12,13 +13,14 @@ namespace Bases
 
         private void Awake()
         {
+            _pathfindingManager = PathfindingManager.Instance;
+            ValidateReferences();
+
             foreach (var point in basePoints)
             {
                 if (point != null)
                     RegisterBasePoint(point);
             }
-
-            _pathfindingManager = PathfindingManager.Instance;
         }
 
         public void RegisterBasePoint(BasePoint point)
@@ -61,6 +63,14 @@ namespace Bases
                 return bestPoint;
 
             return null;
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(_pathfindingManager, nameof(_pathfindingManager), this);
+
+            foreach (var point in basePoints)
+                ReferenceValidator.Validate(point, nameof(point), this);
         }
     }
 }

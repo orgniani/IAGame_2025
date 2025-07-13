@@ -6,6 +6,7 @@ using Mines;
 using UI;
 using Bases;
 using Managers;
+using Helpers;
 
 namespace Miners
 {
@@ -52,6 +53,8 @@ namespace Miners
 
         private void Awake()
         {
+            ValidateReferences();
+
             _inventory = GetComponent<MinerInventory>();
 
             idleState.Initialize(this);
@@ -203,6 +206,13 @@ namespace Miners
 
                 Debug.Log($"[Miner] {name} recalculated path to base due to strategy change");
             }
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(mineManager, nameof(mineManager), this);
+            ReferenceValidator.Validate(baseManager, nameof(baseManager), this);
+            ReferenceValidator.Validate(uiBillboard, nameof(uiBillboard), this);
         }
     }
 }

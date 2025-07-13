@@ -1,3 +1,4 @@
+using Helpers;
 using Managers;
 using TMPro;
 using UnityEngine;
@@ -18,10 +19,14 @@ namespace UI
 
         private PathfindingManager _pathfindingManager;
 
-        private void OnEnable()
+        private void Awake()
         {
             _pathfindingManager = PathfindingManager.Instance;
+            ValidateReferences();
+        }
 
+        private void OnEnable()
+        {
             depthFirstButton.onClick.AddListener(() => SetStrategy(PathfindingManager.PathfindingStrategy.DepthFirst));
             breathFirstButton.onClick.AddListener(() => SetStrategy(PathfindingManager.PathfindingStrategy.BreadthFirst));
             dijkstraButton.onClick.AddListener(() => SetStrategy(PathfindingManager.PathfindingStrategy.Dijkstra));
@@ -54,6 +59,18 @@ namespace UI
         {
             if (totalGoldText != null)
                 totalGoldText.text = $"Total gold: {amount.ToString()}";
+        }
+
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(_pathfindingManager, nameof(_pathfindingManager), this);
+            ReferenceValidator.Validate(totalGoldText, nameof(totalGoldText), this);
+
+            ReferenceValidator.Validate(depthFirstButton, nameof(depthFirstButton), this);
+            ReferenceValidator.Validate(breathFirstButton, nameof(breathFirstButton), this);
+            ReferenceValidator.Validate(dijkstraButton, nameof(dijkstraButton), this);
+            ReferenceValidator.Validate(aStarButton, nameof(aStarButton), this);
         }
     }
 }

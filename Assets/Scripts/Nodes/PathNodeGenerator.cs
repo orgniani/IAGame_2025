@@ -1,3 +1,5 @@
+using Helpers;
+using Managers;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,16 +22,10 @@ namespace Nodes
         [SerializeField] private TerrainLayer[] terrainLayers;
         [SerializeField] private LayerMask ignoreLayers;
 
-        
-        private bool AreNodesAdjacent (PathNode first, PathNode second, float maxSqrDistance)
-        {
-            Vector3 diff = first.Position - second.Position;
-
-            return first != second && diff.sqrMagnitude <= maxSqrDistance;
-        }
-
         public List<PathNode> GenerateNodes ()
         {
+            ValidateReferences();
+
             List<PathNode> nodes = new List<PathNode>();
 
             float separationSqr = nodesSeparation * nodesSeparation;
@@ -74,6 +70,19 @@ namespace Nodes
                 node.AdjacentNodes = nodes.FindAll(n => AreNodesAdjacent(node, n, maxSqrDistance));
 
             return nodes;
+        }
+
+        private bool AreNodesAdjacent(PathNode first, PathNode second, float maxSqrDistance)
+        {
+            Vector3 diff = first.Position - second.Position;
+
+            return first != second && diff.sqrMagnitude <= maxSqrDistance;
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(lowerLeftLimit, nameof(lowerLeftLimit), this);
+            ReferenceValidator.Validate(upperRightLimit, nameof(upperRightLimit), this);
         }
     }
 }
