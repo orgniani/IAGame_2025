@@ -7,8 +7,8 @@ namespace Bases
 {
     public class BaseManager : MonoBehaviour
     {
-        [SerializeField] private PathfindingManager pathfindingManager;
         [SerializeField] private List<BasePoint> basePoints = new();
+        private PathfindingManager _pathfindingManager;
 
         private void Awake()
         {
@@ -17,6 +17,8 @@ namespace Bases
                 if (point != null)
                     RegisterBasePoint(point);
             }
+
+            _pathfindingManager = PathfindingManager.Instance;
         }
 
         public void RegisterBasePoint(BasePoint point)
@@ -43,7 +45,7 @@ namespace Bases
                 if (point == null || point.IsOccupied || point.ReservedBy == requester)
                     continue;
 
-                var path = pathfindingManager.CreatePath(minerPosition, point.Position);
+                var path = _pathfindingManager.CreatePath(minerPosition, point.Position);
                 if (path == null)
                     continue;
 

@@ -4755,7 +4755,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 697157335ea26e84ea76610885b6ca7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathfindingManager: {fileID: 159039881}
   basePoints:
   - {fileID: 883328447}
   - {fileID: 937711374}
@@ -4974,7 +4973,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 232b4af2ee7c54949bbd50faeedf1482, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathfindingManager: {fileID: 159039881}
   goldMines:
   - {fileID: 8162932175873762868}
   - {fileID: 9133766532456900260}

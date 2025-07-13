@@ -9,6 +9,8 @@ namespace StateMachine
         private DoubleEntryTable<FsmState<T>, UnityEvent, FsmState<T>> fsmTable;
         private FsmState<T> _currentState;
 
+        public FsmState<T> CurrentState => _currentState;
+
         public FiniteStateMachine (FsmState<T>[] states, UnityEvent[] transitionEvents, FsmState<T> entryState)
         {
             fsmTable = new DoubleEntryTable<FsmState<T>, UnityEvent, FsmState<T>>(states, transitionEvents);

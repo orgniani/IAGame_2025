@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Nodes;
+using System;
 
 namespace Managers
 {
@@ -21,6 +22,7 @@ namespace Managers
         private List<PathNode> openNodes;
         private List<PathNode> closedNodes;
 
+        public event Action OnStrategyChanged;
 
         void Awake ()
         {
@@ -50,6 +52,14 @@ namespace Managers
         private void GeneratePath ()
         {
             pathNodes = pathGenerator.GenerateNodes();
+        }
+
+        public void SetStrategy(PathfindingStrategy newStrategy)
+        {
+            pathfindingStrategy = newStrategy;
+            OnStrategyChanged?.Invoke();
+
+            Debug.Log($"[Pathfinding] Strategy set to {newStrategy}");
         }
 
         private PathNode FindClosestNode (Vector3 position)

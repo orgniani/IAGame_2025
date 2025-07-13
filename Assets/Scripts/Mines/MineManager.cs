@@ -8,10 +8,10 @@ namespace Mines
 {
     public class MineManager : MonoBehaviour
     {
-        [SerializeField] private PathfindingManager pathfindingManager;
         [SerializeField] private List<GoldMine> goldMines = new();
-
         [SerializeField] private UIHUD hud;
+        
+        private PathfindingManager _pathfindingManager;
         private int _totalGold = 0;
 
         private void Awake()
@@ -21,6 +21,8 @@ namespace Mines
                 if (mine != null)
                     RegisterMine(mine);
             }
+
+            _pathfindingManager = PathfindingManager.Instance;
         }
 
         public void ReportGoldDeposited(int amount)
@@ -39,7 +41,7 @@ namespace Mines
                 if (mine == null || mine.IsDepleted || mine.IsOccupied || mine.ReservedBy == requester)
                     continue;
 
-                var path = pathfindingManager.CreatePath(minerPosition, mine.Position);
+                var path = _pathfindingManager.CreatePath(minerPosition, mine.Position);
                 if (path == null)
                     continue;
 
