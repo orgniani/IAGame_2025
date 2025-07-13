@@ -1,6 +1,7 @@
 using Bases;
 using Helpers;
 using Mines;
+using Nodes;
 using UI;
 using UnityEngine;
 
@@ -17,10 +18,12 @@ namespace Miners
         [SerializeField] private string miningBoolParameter = "mining";
         
         private Animator _animator;
+        private PathNodeAgent _agent;
 
         private void Awake()
         {
             _animator = GetComponent<Animator>();
+            _agent = miner.GetComponent<PathNodeAgent>();
             ValidateReferences();
         }
 
@@ -40,6 +43,15 @@ namespace Miners
             miner.OnStartMovingToMine.RemoveListener(HandleStopMining);
         }
 
+        private void Update()
+        {
+            if (_agent == null)
+                return;
+
+            float horSpeed = new Vector2(_agent.CurrentVelocity.x, _agent.CurrentVelocity.z).magnitude;
+            _animator.SetFloat(horSpeedParameter, horSpeed);
+        }
+
         private void HandleMining()
         {
             _animator.SetBool(miningBoolParameter, true);
@@ -53,6 +65,7 @@ namespace Miners
         private void ValidateReferences()
         {
             ReferenceValidator.Validate(miner, nameof(miner), this);
+            ReferenceValidator.Validate(_agent, nameof(_agent), this);
             ReferenceValidator.Validate(_animator, nameof(_animator), this);
         }
     }

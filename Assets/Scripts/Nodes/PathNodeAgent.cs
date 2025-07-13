@@ -13,8 +13,14 @@ namespace Nodes
         private PathNode _targetNode;
         private Vector3? _destination;
 
+        private Vector3 _lastPosition;
+        private Vector3 _currentVelocity;
+        public Vector3 CurrentVelocity => _currentVelocity;
+
+
         public bool HasReachedDestination { get; private set; } = false;
-        
+        public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
+
         public Vector3? Destination 
         { 
             get => _destination;
@@ -31,12 +37,16 @@ namespace Nodes
             }
         }
 
-        public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
-
         void Update()
         {
             if (Destination == null || HasReachedDestination)
+            {
+                _currentVelocity = Vector3.zero;
                 return;
+            }
+
+            _currentVelocity = (transform.position - _lastPosition) / Time.deltaTime;
+            _lastPosition = transform.position;
 
             Vector3 targetPosition = _targetNode.Position;
             Vector3 toTarget = targetPosition - transform.position;
@@ -61,6 +71,7 @@ namespace Nodes
                     HasReachedDestination = true;
             }
         }
+
 
 #if UNITY_EDITOR
         void OnDrawGizmos ()
