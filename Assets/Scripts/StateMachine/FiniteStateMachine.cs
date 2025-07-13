@@ -7,29 +7,28 @@ namespace StateMachine
     public class FiniteStateMachine<T>
     {
         private DoubleEntryTable<FsmState<T>, UnityEvent, FsmState<T>> fsmTable;
-        private FsmState<T> currentState;
-
+        private FsmState<T> _currentState;
 
         public FiniteStateMachine (FsmState<T>[] states, UnityEvent[] transitionEvents, FsmState<T> entryState)
         {
             fsmTable = new DoubleEntryTable<FsmState<T>, UnityEvent, FsmState<T>>(states, transitionEvents);
-            currentState = entryState;
+            _currentState = entryState;
 
-            currentState.Enter();
+            _currentState.Enter();
         }
 
         private void OnTriggerTransition (UnityEvent transitionEvent)
         {
-            FsmState<T> targetState = fsmTable[currentState, transitionEvent];
+            FsmState<T> targetState = fsmTable[_currentState, transitionEvent];
 
             if (targetState != null)
             {
-                Debug.Log($"[FSM] Transitioning from {currentState.GetType().Name} to {targetState.GetType().Name}");
+                Debug.Log($"[FSM] Transitioning from {_currentState.GetType().Name} to {targetState.GetType().Name}");
 
-                currentState.Exit();
+                _currentState.Exit();
                 targetState.Enter();
 
-                currentState = targetState;
+                _currentState = targetState;
             }
         }
 
@@ -39,6 +38,6 @@ namespace StateMachine
             transitionEvent.AddListener(() => OnTriggerTransition(transitionEvent));
         }
 
-        public void Update () => currentState.Update();
+        public void Update () => _currentState.Update();
     }
 }

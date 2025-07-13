@@ -9,23 +9,23 @@ namespace Nodes
         [SerializeField] private float movementSpeed = 2f;
         [SerializeField] private float rotateSpeed = 45f;
 
-        private Stack<PathNode> currentPath;
-        private PathNode targetNode;
-        private Vector3? destination;
+        private Stack<PathNode> _currentPath;
+        private PathNode _targetNode;
+        private Vector3? _destination;
 
         public bool HasReachedDestination { get; private set; } = false;
         
         public Vector3? Destination 
         { 
-            get => destination;
+            get => _destination;
             set
             {
-                destination = value;
+                _destination = value;
 
-                if (destination != null)
+                if (_destination != null)
                 {
-                    currentPath = PathfindingManager.Instance.CreatePath(transform.position, destination.Value);
-                    targetNode = currentPath.Pop();
+                    _currentPath = PathfindingManager.Instance.CreatePath(transform.position, _destination.Value);
+                    _targetNode = _currentPath.Pop();
                     HasReachedDestination = false;
                 }
             }
@@ -38,7 +38,7 @@ namespace Nodes
             if (Destination == null || HasReachedDestination)
                 return;
 
-            Vector3 targetPosition = targetNode.Position;
+            Vector3 targetPosition = _targetNode.Position;
             Vector3 toTarget = targetPosition - transform.position;
             float distanceSqr = toTarget.sqrMagnitude;
 
@@ -55,8 +55,8 @@ namespace Nodes
 
             if (distanceSqr <= 0.01f)
             {
-                if (currentPath.Count > 0)
-                    targetNode = currentPath.Pop();
+                if (_currentPath.Count > 0)
+                    _targetNode = _currentPath.Pop();
                 else
                     HasReachedDestination = true;
             }
@@ -65,19 +65,19 @@ namespace Nodes
 #if UNITY_EDITOR
         void OnDrawGizmos ()
         {
-            if (targetNode == null)
+            if (_targetNode == null)
                 return;
 
             float lineThickness = 5f;
             UnityEditor.Handles.color = Color.red;
 
-            UnityEditor.Handles.DrawLine(transform.position, targetNode.Position, lineThickness);
+            UnityEditor.Handles.DrawLine(transform.position, _targetNode.Position, lineThickness);
 
-            if (currentPath != null && currentPath.Count > 0)
+            if (_currentPath != null && _currentPath.Count > 0)
             {
-                PathNode[] nodes = currentPath.ToArray();
+                PathNode[] nodes = _currentPath.ToArray();
 
-                UnityEditor.Handles.DrawLine(targetNode.Position, nodes[0].Position, lineThickness);
+                UnityEditor.Handles.DrawLine(_targetNode.Position, nodes[0].Position, lineThickness);
 
                 for (int i = 0; i < nodes.Length - 1; i++)
                     UnityEditor.Handles.DrawLine(nodes[i].Position, nodes[i + 1].Position, lineThickness);

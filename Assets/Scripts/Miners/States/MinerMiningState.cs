@@ -17,17 +17,17 @@ namespace Miners
 
         protected override void OnInitialize()
         {
-            _coroutineHost = owner;
+            _coroutineHost = _owner;
         }
 
         public override void Enter()
         {
-            Debug.Log($"[FSM] Entering {nameof(MinerMiningState)} on {owner.name}");
+            Debug.Log($"[FSM] Entering {nameof(MinerMiningState)} on {_owner.name}");
 
-            if (owner.CurrentMine == null)
+            if (_owner.CurrentMine == null)
             {
-                Debug.LogWarning($"[FSM] {owner.name} tried to mine but has no target mine.");
-                owner.OnStartReturning.Invoke();
+                Debug.LogWarning($"[FSM] {_owner.name} tried to mine but has no target mine.");
+                _owner.OnStartReturning.Invoke();
                 return;
             }
 
@@ -36,7 +36,7 @@ namespace Miners
 
         public override void Exit()
         {
-            Debug.Log($"[FSM] Exiting {nameof(MinerMiningState)} on {owner.name}");
+            Debug.Log($"[FSM] Exiting {nameof(MinerMiningState)} on {_owner.name}");
 
             if (_miningRoutine != null)
                 _coroutineHost.StopCoroutine(_miningRoutine);
@@ -46,7 +46,7 @@ namespace Miners
 
         private IEnumerator MiningLoop()
         {
-            var mine = owner.CurrentMine;
+            var mine = _owner.CurrentMine;
 
             while (CanContinueMining(mine))
             {
@@ -59,35 +59,35 @@ namespace Miners
 
         private bool CanContinueMining(GoldMine mine)
         {
-            return mine != null && !mine.IsDepleted && !owner.Inventory.IsFull;
+            return mine != null && !mine.IsDepleted && !_owner.Inventory.IsFull;
         }
 
         private void MineGold(GoldMine mine)
         {
             int extracted = mine.ExtractGold(goldPerCycle);
-            owner.Inventory.AddGold(extracted);
+            _owner.Inventory.AddGold(extracted);
 
-            owner.UpdateBillboard();
+            _owner.UpdateBillboard();
 
-            Debug.Log($"[FSM] {owner.name} mined {extracted}, now carrying {owner.Inventory.CurrentGold}");
+            Debug.Log($"[FSM] {_owner.name} mined {extracted}, now carrying {_owner.Inventory.CurrentGold}");
         }
 
         private void HandlePostMining(GoldMine mine)
         {
-            owner.ClearCurrentMine();
+            _owner.ClearCurrentMine();
 
-            if (owner.Inventory.IsFull)
+            if (_owner.Inventory.IsFull)
             {
-                owner.OnStartReturning?.Invoke();
+                _owner.OnStartReturning?.Invoke();
                 return;
             }
 
-            owner.SelectNewMine();
+            _owner.SelectNewMine();
 
-            if (owner.CurrentMine != null)
-                owner.OnStartMovingToMine?.Invoke();
+            if (_owner.CurrentMine != null)
+                _owner.OnStartMovingToMine?.Invoke();
             else
-                owner.OnStartReturning?.Invoke();
+                _owner.OnStartReturning?.Invoke();
         }
     }
 }

@@ -4,34 +4,33 @@ namespace Helpers
 {
     public class DoubleEntryTable<RT, CT, VT>
     {
-        private readonly RT[] rows;
-        private readonly CT[] columns;
-        private readonly VT[,] values;
-
+        private readonly RT[] _rows;
+        private readonly CT[] _columns;
+        private readonly VT[,] _values;
 
         public DoubleEntryTable (RT[] rows, CT[] columns)
         {
-            this.rows = rows;
-            this.columns = columns;
-            values = new VT[rows.Length, columns.Length];
+            this._rows = rows;
+            this._columns = columns;
+            _values = new VT[rows.Length, columns.Length];
         }
 
         public VT this[RT row, CT column]
         {
             get
             {
-                int i = Array.IndexOf(rows, row);
-                int j = Array.IndexOf(columns, column);
+                int i = Array.IndexOf(_rows, row);
+                int j = Array.IndexOf(_columns, column);
 
-                return values[i, j];
+                return _values[i, j];
             }
 
             set
             {
-                int i = Array.IndexOf(rows, row);
-                int j = Array.IndexOf(columns, column);
+                int i = Array.IndexOf(_rows, row);
+                int j = Array.IndexOf(_columns, column);
 
-                values[i, j] = value;
+                _values[i, j] = value;
             }
         }
     }

@@ -15,24 +15,24 @@ namespace Miners
 
         protected override void OnInitialize()
         {
-            _coroutineHost = owner;
+            _coroutineHost = _owner;
         }
 
         public override void Enter()
         {
-            Debug.Log($"[FSM] Entering {nameof(MinerIdleState)} on {owner.name}");
+            Debug.Log($"[FSM] Entering {nameof(MinerIdleState)} on {_owner.name}");
 
-            owner.SelectNewMine();
+            _owner.SelectNewMine();
 
-            if (owner.CurrentMine != null)
+            if (_owner.CurrentMine != null)
             {
-                Debug.Log($"[FSM] {owner.name} found mine immediately");
+                Debug.Log($"[FSM] {_owner.name} found mine immediately");
                 _retryCoroutine = _coroutineHost.StartCoroutine(SearchForMine());
             }
-            else if (owner.MineManager.AllMinesDepleted())
+            else if (_owner.MineManager.AllMinesDepleted())
             {
-                Debug.Log($"[FSM] {owner.name} all mines depleted, going to base");
-                owner.OnStartReturning?.Invoke();
+                Debug.Log($"[FSM] {_owner.name} all mines depleted, going to base");
+                _owner.OnStartReturning?.Invoke();
             }
         }
 
@@ -45,31 +45,31 @@ namespace Miners
 
             _retryCoroutine = null;
 
-            Debug.Log($"[FSM] Exiting {nameof(MinerIdleState)} on {owner.name}");
+            Debug.Log($"[FSM] Exiting {nameof(MinerIdleState)} on {_owner.name}");
         }
 
         private IEnumerator SearchForMine()
         {
-            yield return new WaitUntil(() => owner.IsInitialized);
+            yield return new WaitUntil(() => _owner.IsInitialized);
 
-            while (!owner.MineManager.AllMinesDepleted())
+            while (!_owner.MineManager.AllMinesDepleted())
             {
                 yield return new WaitForSeconds(waitTime);
 
-                owner.SelectNewMine();
+                _owner.SelectNewMine();
 
-                if (owner.CurrentMine != null)
+                if (_owner.CurrentMine != null)
                 {
-                    Debug.Log($"[FSM] {owner.name} found mine on retry");
-                    owner.OnStartMovingToMine?.Invoke();
+                    Debug.Log($"[FSM] {_owner.name} found mine on retry");
+                    _owner.OnStartMovingToMine?.Invoke();
                     yield break;
                 }
 
-                Debug.Log($"[FSM] {owner.name} still no mine, retrying...");
+                Debug.Log($"[FSM] {_owner.name} still no mine, retrying...");
             }
 
-            Debug.Log($"[FSM] {owner.name} all mines depleted after retries");
-            owner.OnStartReturning?.Invoke();
+            Debug.Log($"[FSM] {_owner.name} all mines depleted after retries");
+            _owner.OnStartReturning?.Invoke();
         }
     }
 }

@@ -14,28 +14,28 @@ namespace Miners
 
         protected override void OnInitialize()
         {
-            _agent = owner.GetComponent<PathNodeAgent>();
+            _agent = _owner.GetComponent<PathNodeAgent>();
         }
 
         public override void Enter()
         {
-            Debug.Log($"[FSM] Entering {nameof(MinerReturningState)} on {owner.name}");
+            Debug.Log($"[FSM] Entering {nameof(MinerReturningState)} on {_owner.name}");
 
-            owner.SelectNewBase();
+            _owner.SelectNewBase();
 
             _agent.MovementSpeed = returnSpeed;
-            _agent.Destination = owner.CurrentBase.Position;
+            _agent.Destination = _owner.CurrentBase.Position;
         }
 
         public override void Update()
         {
             if (_agent.HasReachedDestination)
             {
-                Debug.Log($"[FSM] {owner.name} returned to base");
-                owner.OnReachedBase.Invoke();
+                Debug.Log($"[FSM] {_owner.name} returned to base");
+                _owner.OnReachedBase.Invoke();
             }
         }
 
-        public override void Exit() { Debug.Log($"[FSM] Exiting {nameof(MinerReturningState)} on {owner.name}");  }
+        public override void Exit() { Debug.Log($"[FSM] Exiting {nameof(MinerReturningState)} on {_owner.name}");  }
     }
 }

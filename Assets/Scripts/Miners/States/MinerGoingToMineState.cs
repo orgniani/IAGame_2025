@@ -14,18 +14,18 @@ namespace Miners
 
         protected override void OnInitialize()
         {
-            _agent = owner.GetComponent<PathNodeAgent>();
+            _agent = _owner.GetComponent<PathNodeAgent>();
         }
 
         public override void Enter()
         {
-            Debug.Log($"[FSM] Entering {nameof(MinerGoingToMineState)} on {owner.name}");
+            Debug.Log($"[FSM] Entering {nameof(MinerGoingToMineState)} on {_owner.name}");
 
-            owner.ClearCurrentBase();
+            _owner.ClearCurrentBase();
             _agent.MovementSpeed = moveSpeed;
 
-            if (owner.CurrentMine != null)
-                _agent.Destination = owner.CurrentMine.Position;
+            if (_owner.CurrentMine != null)
+                _agent.Destination = _owner.CurrentMine.Position;
         }
 
         public override void Update()
@@ -34,29 +34,29 @@ namespace Miners
 
             if (_agent.HasReachedDestination)
             {
-                Debug.Log($"[FSM] {owner.name} reached the mine");
-                owner.OnReachedMine.Invoke();
+                Debug.Log($"[FSM] {_owner.name} reached the mine");
+                _owner.OnReachedMine.Invoke();
             }
         }
 
-        public override void Exit() { Debug.Log($"[FSM] Exiting {nameof(MinerGoingToMineState)} on {owner.name}"); }
+        public override void Exit() { Debug.Log($"[FSM] Exiting {nameof(MinerGoingToMineState)} on {_owner.name}"); }
 
         private bool IsMineValid()
         {
-            var mine = owner.CurrentMine;
+            var mine = _owner.CurrentMine;
 
-            if (mine == null || mine.IsDepleted || mine.ReservedBy != owner)
+            if (mine == null || mine.IsDepleted || mine.ReservedBy != _owner)
             {
-                Debug.Log($"[FSM] {owner.name} lost their mine en route");
+                Debug.Log($"[FSM] {_owner.name} lost their mine en route");
 
-                owner.SelectNewMine();
+                _owner.SelectNewMine();
 
-                if (owner.CurrentMine != null)
+                if (_owner.CurrentMine != null)
                 {
-                    _agent.Destination = owner.CurrentMine.Position;
-                    Debug.Log($"[FSM] {owner.name} switching to new mine: {owner.CurrentMine.name}");
+                    _agent.Destination = _owner.CurrentMine.Position;
+                    Debug.Log($"[FSM] {_owner.name} switching to new mine: {_owner.CurrentMine.name}");
                 }
-                else owner.OnStartReturning.Invoke();
+                else _owner.OnStartReturning.Invoke();
 
                 return false;
             }

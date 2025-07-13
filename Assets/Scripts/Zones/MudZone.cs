@@ -8,7 +8,6 @@ namespace Zones
         [SerializeField] private float speedReductionPerc = 0.5f;
         [SerializeField] private LayerMask affectedLayers;
 
-
         void OnTriggerEnter (Collider other)
         {
             PathNodeAgent agent = other.gameObject.GetComponentInParent<PathNodeAgent>();

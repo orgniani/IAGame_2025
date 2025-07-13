@@ -14,29 +14,29 @@ namespace Miners
 
         protected override void OnInitialize()
         {
-            _coroutineHost = owner;
+            _coroutineHost = _owner;
         }
 
         public override void Enter()
         {
-            Debug.Log($"[FSM] Entering {nameof(MinerUnloadingState)} on {owner.name}");
+            Debug.Log($"[FSM] Entering {nameof(MinerUnloadingState)} on {_owner.name}");
 
             _coroutineHost.StartCoroutine(UnloadRoutine());
         }
 
         public override void Update() { }
 
-        public override void Exit() { Debug.Log($"[FSM] Exiting {nameof(MinerUnloadingState)} on {owner.name}"); }
+        public override void Exit() { Debug.Log($"[FSM] Exiting {nameof(MinerUnloadingState)} on {_owner.name}"); }
 
         private IEnumerator UnloadRoutine()
         {
             yield return new WaitForSeconds(unloadTime);
 
-            owner.ReportUnloadedGold();        
-            owner.Inventory.Clear();
-            owner.UpdateBillboard();
+            _owner.ReportUnloadedGold();        
+            _owner.Inventory.Clear();
+            _owner.UpdateBillboard();
 
-            owner.OnUnloadFinished?.Invoke();
+            _owner.OnUnloadFinished?.Invoke();
         }
     }
 }

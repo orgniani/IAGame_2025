@@ -2,11 +2,11 @@ namespace StateMachine
 {
     public abstract class FsmState<T>
     {
-        protected T owner;
+        protected T _owner;
 
         public void Initialize (T owner)
         {
-            this.owner = owner;
+            _owner = owner;
             OnInitialize();
         }
 
